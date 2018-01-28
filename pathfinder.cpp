@@ -21,12 +21,6 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 	//fetch the most recent iteration of the game board
 	vector<vector<Node*>> currGameState = updateGameState();
 	
-	//run proper checks before pathfinding
-	if(!checkBounds(startY, startX) || !checkBounds(goalY, goalX))
-	{
-		return;
-	}
-	
 	//initialize the open and closed sets
 	vector<Node*> openSet;
 	vector<Node*> closedSet;
@@ -46,7 +40,8 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 		//don't do anymore pathfinding if we've found the goal!
 		if (checkGoal(current->getY(), current->getX(), goalY, goalX))
 		{
-			cout << "AStar: goal node found!" << endl;
+			cout << "AStar: goal node found! (nodes explored = "
+			     << openSet.size() + closedSet.size() << ")" << endl;
 
 			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
 
@@ -59,13 +54,9 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 			drawSet(closedSet, FL_BLUE);
 			cout << "done" << endl;
 			
-			//draw the path and write directly to snake's input buffer
-			cout << "AStar: drawing path (red) ... ";
-			drawPath(currGameState, currGameState.at(goalY).at(goalX));
-			cout << "done" << endl;
 
 			//~ currGameState.at(startY).at(startX)->color(FL_MAGENTA);
-			
+			//write path directly to snake's input buffer
 			cout << "AStar: writing path to input buffer ... ";
 			snake->buffer = buildPath(currGameState, currGameState.at(goalY).at(goalX));
 			cout << "done" << endl;
@@ -81,7 +72,7 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 		closedSet.push_back(current);
 
 		//fetch the four adjacent nodes to the current node (if they are valid)
-		vector<Node*> neighborVec = getNeighbors2(currGameState, openSet, current);
+		vector<Node*> neighborVec = getNeighbors2(currGameState, current);
 
 		for (int i = 0; i < neighborVec.size(); i++)
 		{
@@ -91,9 +82,8 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 			if (!nodeInSet(closedSet, currentNeighbor))
 			{
 				//update score 
-				currentNeighbor->
-				setTotalCost(currentNeighbor->getMoveCost()
-				+ currentNeighbor->heuristic(goalX, goalY));
+				//~ currentNeighbor->setTotalCost(currentNeighbor->heuristic(goalX, goalY)); //greedy best-first cost (heuristic only)
+				currentNeighbor->updateTotalCost(goalX, goalY);
 
 				//if neighbor is not in open set
 				if (!nodeInSet(openSet, currentNeighbor))
@@ -117,8 +107,9 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 	}
 
 	pathFound = false; //tell the game to keep pathfinding on each new frame
-	cout << "AStar: no path found!" << endl;
-	
+	cout << "AStar: no path found! (nodes explored = " << openSet.size() + closedSet.size()
+	     << ")" << endl;
+	     
 	cout << "AStar: drawing open set (cyan) ... ";
 	drawSet(openSet, FL_CYAN);
 	cout << "done" << endl;
@@ -141,7 +132,7 @@ void Pathfinder::drawSet(vector<Node*> set, Fl_Color color)
 	
 }
 
-vector<Node*> Pathfinder::getNeighbors2(vector<vector<Node*>> gameState, vector<Node*> openSet, Node* node)
+vector<Node*> Pathfinder::getNeighbors2(vector<vector<Node*>> gameState, Node* node)
 {
 	//will contain the VALID adjacent nodes to the argument node
 	vector<Node*> neighborVec;
@@ -157,33 +148,37 @@ vector<Node*> Pathfinder::getNeighbors2(vector<vector<Node*>> gameState, vector<
 	if (checkBounds(row - 1, col) && (!checkBlocked(gameState, row - 1, col)))
 	{
 		if (gameState.at(row - 1).at(col)->getParent() == nullptr)
+        {
 			gameState.at(row - 1).at(col)->setParent(node);
-			
-		gameState.at(row - 1).at(col)->setMoveCost(node->getMoveCost() + 1);
+            gameState.at(row - 1).at(col)->setMoveCost(node->getMoveCost() + 1);
+        }
 		neighborVec.push_back(gameState.at(row - 1).at(col));
 	}
 	if (checkBounds(row + 1, col) && (!checkBlocked(gameState, row + 1, col)))
 	{
 		if (gameState.at(row + 1).at(col)->getParent() == nullptr)
+        {
 			gameState.at(row + 1).at(col)->setParent(node);
-			
-		gameState.at(row + 1).at(col)->setMoveCost(node->getMoveCost() + 1);
+            gameState.at(row + 1).at(col)->setMoveCost(node->getMoveCost() + 1);
+        }
 		neighborVec.push_back(gameState.at(row + 1).at(col));
 	}
 	if (checkBounds(row, col - 1) && (!checkBlocked(gameState, row, col - 1)))
 	{
 		if (gameState.at(row).at(col - 1)->getParent() == nullptr)
+        {
 			gameState.at(row).at(col - 1)->setParent(node);
-			
-		gameState.at(row).at(col - 1)->setMoveCost(node->getMoveCost() + 1);
+            gameState.at(row).at(col - 1)->setMoveCost(node->getMoveCost() + 1);
+        }
 		neighborVec.push_back(gameState.at(row).at(col - 1));
 	}
 	if (checkBounds(row, col + 1) && (!checkBlocked(gameState, row, col + 1)))
 	{
 		if (gameState.at(row).at(col + 1)->getParent() == nullptr)
+        {
 			gameState.at(row).at(col + 1)->setParent(node);
-			
-		gameState.at(row).at(col + 1)->setMoveCost(node->getMoveCost() + 1);
+            gameState.at(row).at(col + 1)->setMoveCost(node->getMoveCost() + 1);
+        }
 		neighborVec.push_back(gameState.at(row).at(col + 1));
 	}
 	return neighborVec;
@@ -197,6 +192,7 @@ vector<string> Pathfinder::buildPath(vector<vector<Node*>> gameState, Node* goal
 	
 	while (current != nullptr)
 	{
+		current->color(FL_RED);
 		Node* currentParent = current->getParent();
 		if (currentParent == nullptr)
 			break;	//you're dereferencing a null pointer! open your eyes!
@@ -227,18 +223,6 @@ vector<string> Pathfinder::buildPath(vector<vector<Node*>> gameState, Node* goal
 		current = currentParent;
 	}
 	return pathBuffer;
-}
-
-void Pathfinder::drawPath(vector<vector<Node*>> gameState, Node* goal)
-{
-	//start from the goal node and trace parents backwards to start
-	Node* current = goal;
-	while (current != nullptr)
-	{
-		current->color(FL_RED);
-		current = current->getParent();
-	}
-	
 }
 
 void Pathfinder::setSnake(Snake* snake){ this->snake = snake; }

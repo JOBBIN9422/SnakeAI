@@ -1,5 +1,6 @@
 #include <climits>
 #include <iostream>
+#include <cmath>
 #include "node.h"
 using namespace std;
 
@@ -30,6 +31,11 @@ void Node::setParent(Node* parent) { this->parent = parent; }
 int Node::heuristic(int xGoal, int yGoal)
 {
 	return abs(this->x - xGoal) + abs(this->y - yGoal);
+
+	//~ int dx = abs(this->x - xGoal);
+	//~ int dy = abs(this->y - yGoal);
+
+	//~ return sqrt(pow(dx, 2) + pow(dy, 2));
 }
 
 int Node::updateTotalCost(int xGoal, int yGoal)
