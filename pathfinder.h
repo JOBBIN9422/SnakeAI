@@ -27,13 +27,18 @@ class Pathfinder
 		//~ int heuristic(Node* start, Node* goal);
 		
 		void setSnake(Snake* snake);
+        
 		void AStar(int startX, int startY, int goalX, int goalY);
+		void greedyBFS(int startX, int startY, int goalX, int goalY);
+		void BFS(int startX, int startY, int goalX, int goalY);
+        
 		void printGameState(std::vector<std::vector<Node*>> gameState);
 		void resetPathFlag();
 		void drawSet(std::vector<Node*> set, Fl_Color color);
 		
 		std::vector<std::vector<Node*>> updateGameState();
 		std::vector<Node*> getNeighbors2(std::vector<std::vector<Node*>> gameState, Node* node);
+		std::vector<Node*> getNeighborsBFS(std::vector<std::vector<Node*>> gameState, Node* node);
 
         //logic checks 
 		bool checkBounds(int row, int col);     //is node out of bounds?

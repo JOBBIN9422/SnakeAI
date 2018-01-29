@@ -6,8 +6,13 @@
 using namespace std;
 //Fl_JPEG_Image background("nicc.jpeg");
 
-Snake::Snake(int numSegments, int x, int y) : startX(x), startY(y), maxBufferSize(1000), 
-Fl_Double_Window(800, 600, "shitty snake game"), direction("LEFT"), dead(false)
+Snake::Snake(int numSegments, int x, int y, int screenW, int screenH, string searchAlgorithm) :
+startX(x),startY(y),
+maxBufferSize(1000),
+screenW(screenW), screenH(screenH),
+Fl_Double_Window(screenW, screenH, "shitty snake game"),
+searchAlgorithm(searchAlgorithm),
+direction("RIGHT"), dead(false)
 {	/*
 	Fl_Box* bgImage = new Fl_Box(0, 0, 800, 600);
 	bgImage->image(background);
@@ -92,7 +97,14 @@ void Snake::move()
 	if (!pathfinder->checkPathFound())
 	{
 		//divide by 20 to convert values from pixels to grid coords (gross)
-		pathfinder->AStar(headX / 20, headY / 20, foodX / 20, foodY / 20);
+        if(searchAlgorithm == "AStar")
+            pathfinder->AStar(headX / 20, headY / 20, foodX / 20, foodY / 20);
+        else if (searchAlgorithm == "GreedyBFS")
+            pathfinder->greedyBFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
+        else if (searchAlgorithm == "BFS")
+            pathfinder->BFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
+                
+        
 	}
 	
 	

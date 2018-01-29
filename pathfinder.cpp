@@ -123,6 +123,113 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 	cout << "------------------------------" << endl;
 }
 
+
+void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
+{
+	cout << "GreedyBFS: starting search from (" << startX << ", " << startY << ") to ("
+	     << goalX << ", " << goalY << ")" << endl; 
+	//fetch the most recent iteration of the game board
+	vector<vector<Node*>> currGameState = updateGameState();
+	
+	//initialize the open and closed sets
+	vector<Node*> openSet;
+	vector<Node*> closedSet;
+
+	//init start node and add to open set 
+	openSet.push_back(currGameState.at(startY).at(startX));
+	currGameState.at(startY).at(startX)->setMoveCost(0);
+	currGameState.at(startY).at(startX)->
+	setTotalCost(currGameState.at(startY).at(startX)->heuristic(goalX, goalY));
+
+	while(!openSet.empty())
+	{		
+		//choose the node in the open set w/ the lowest total cost
+		sort(openSet.begin(), openSet.end(), compare);
+		Node* current = openSet.back();
+
+		//don't do anymore pathfinding if we've found the goal!
+		if (checkGoal(current->getY(), current->getX(), goalY, goalX))
+		{
+			cout << "GreedyBFS: goal node found! (nodes explored = "
+			     << openSet.size() + closedSet.size() << ")" << endl;
+
+			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
+
+			//draw the open and closed sets
+			cout << "GreedyBFS: drawing open set (cyan) ... ";
+			drawSet(openSet, FL_CYAN);
+			cout << "done" << endl;
+
+			cout << "GreedyBFS: drawing closed set (blue) ... ";
+			drawSet(closedSet, FL_BLUE);
+			cout << "done" << endl;
+			
+
+			//~ currGameState.at(startY).at(startX)->color(FL_MAGENTA);
+			//write path directly to snake's input buffer
+			cout << "GreedyBFS: writing path to input buffer ... ";
+			snake->buffer = buildPath(currGameState, currGameState.at(goalY).at(goalX));
+			cout << "done" << endl;
+			cout << "------------------------------" << endl;
+
+			//tell the game to stop pathfinding (we're done until we eat the food)
+			pathFound = true;
+			return;
+		}
+		
+		//add the current node to the closed set and remove from open set
+		openSet.pop_back();
+		closedSet.push_back(current);
+
+		//fetch the four adjacent nodes to the current node (if they are valid)
+		vector<Node*> neighborVec = getNeighbors2(currGameState, current);
+
+		for (int i = 0; i < neighborVec.size(); i++)
+		{
+			Node* currentNeighbor = neighborVec.at(i);
+			
+			//if neighbor is not in closed set
+			if (!nodeInSet(closedSet, currentNeighbor))
+			{
+				//update score 
+				currentNeighbor->setTotalCost(currentNeighbor->heuristic(goalX, goalY)); //greedy best-first cost (heuristic only)
+
+				//if neighbor is not in open set
+				if (!nodeInSet(openSet, currentNeighbor))
+				{
+					openSet.push_back(currentNeighbor);
+				}
+				else
+				{	//check for lower cost paths 
+					auto openNeighbor = find(openSet.begin(), openSet.end(), currentNeighbor);
+
+					if (currentNeighbor->getMoveCost() < (*openNeighbor)->getMoveCost())
+					{
+						cout << "GreedyBFS: lower cost path found" << endl;
+						(*openNeighbor)->setMoveCost(currentNeighbor->getMoveCost());
+						(*openNeighbor)->setParent(currentNeighbor->getParent());
+					}
+				}
+				
+			}
+		}
+	}
+
+	pathFound = false; //tell the game to keep pathfinding on each new frame
+	cout << "GreedyBFS: no path found! (nodes explored = " << openSet.size() + closedSet.size()
+	     << ")" << endl;
+	     
+	cout << "GreedyBFS: drawing open set (cyan) ... ";
+	drawSet(openSet, FL_CYAN);
+	cout << "done" << endl;
+
+	cout << "GreedyBFS: drawing closed set (blue) ... ";
+	drawSet(closedSet, FL_BLUE);
+	cout << "done" << endl;
+	
+	cout << "------------------------------" << endl;
+}
+
 void Pathfinder::drawSet(vector<Node*> set, Fl_Color color)
 {
 	for (int i = 0; i < set.size(); i++)
@@ -130,6 +237,84 @@ void Pathfinder::drawSet(vector<Node*> set, Fl_Color color)
 		set.at(i)->color(color);
 	}
 	
+}
+
+void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
+{
+    cout << "BFS: starting search from (" << startX << ", " << startY << ") to ("
+     << goalX << ", " << goalY << ")" << endl; 
+	//fetch the most recent iteration of the game board
+	vector<vector<Node*>> currGameState = updateGameState();
+	
+	//initialize the open and closed sets
+	vector<Node*> openSet;
+	vector<Node*> closedSet;
+
+	//init start node and add to open set 
+	openSet.push_back(currGameState.at(startY).at(startX));
+
+    while (!openSet.empty())
+    {
+        Node* current = openSet.front();
+        openSet.erase(openSet.begin());
+
+        if (checkGoal(current->getY(), current->getX(), goalY, goalX))
+        {
+            cout << "BFS: goal node found! (nodes explored = "
+			     << openSet.size() + closedSet.size() << ")" << endl;
+
+			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
+
+			//draw the open and closed sets
+			cout << "BFS: drawing open set (cyan) ... ";
+			drawSet(openSet, FL_CYAN);
+			cout << "done" << endl;
+
+			cout << "BFS: drawing closed set (blue) ... ";
+			drawSet(closedSet, FL_BLUE);
+			cout << "done" << endl;
+			
+			//write path directly to snake's input buffer
+			cout << "BFS: writing path to input buffer ... ";
+			snake->buffer = buildPath(currGameState, currGameState.at(goalY).at(goalX));
+			cout << "done" << endl;
+			cout << "------------------------------" << endl;
+
+			//tell the game to stop pathfinding (we're done until we eat the food)
+			pathFound = true;
+			return;
+        }
+
+        vector<Node*> neighborVec = getNeighborsBFS(currGameState, current);
+        for (int i = 0; i <neighborVec.size() ; i++)
+        {
+            Node* currentNeighbor = neighborVec.at(i);
+            if (nodeInSet(closedSet, currentNeighbor))
+            {
+                continue;
+            }
+
+            if(!nodeInSet(openSet, currentNeighbor))
+            {
+                currentNeighbor->setParent(current);
+                openSet.push_back(currentNeighbor);
+            }
+        }
+        closedSet.push_back(current);
+    }
+    
+    pathFound = false; //tell the game to keep pathfinding on each new frame
+	cout << "BFS: no path found! (nodes explored = " << openSet.size() + closedSet.size()
+	     << ")" << endl;
+	     
+	cout << "BFS: drawing open set (cyan) ... ";
+	drawSet(openSet, FL_CYAN);
+	cout << "done" << endl;
+
+	cout << "BFS: drawing closed set (blue) ... ";
+	drawSet(closedSet, FL_BLUE);
+	cout << "done" << endl;
+    cout << "------------------------------" << endl;
 }
 
 vector<Node*> Pathfinder::getNeighbors2(vector<vector<Node*>> gameState, Node* node)
@@ -179,6 +364,37 @@ vector<Node*> Pathfinder::getNeighbors2(vector<vector<Node*>> gameState, Node* n
 			gameState.at(row).at(col + 1)->setParent(node);
             gameState.at(row).at(col + 1)->setMoveCost(node->getMoveCost() + 1);
         }
+		neighborVec.push_back(gameState.at(row).at(col + 1));
+	}
+	return neighborVec;
+}
+
+vector<Node*> Pathfinder::getNeighborsBFS(vector<vector<Node*>> gameState, Node* node)
+{
+	//will contain the VALID adjacent nodes to the argument node
+	vector<Node*> neighborVec;
+	int row = node->getY();
+	int col = node->getX();
+
+	/* for each potential neighbor:
+	 * -check if it's in bounds
+	 * -check if it's NOT an obstacle
+	 */
+	 
+	if (checkBounds(row - 1, col) && (!checkBlocked(gameState, row - 1, col)))
+	{
+		neighborVec.push_back(gameState.at(row - 1).at(col));
+	}
+	if (checkBounds(row + 1, col) && (!checkBlocked(gameState, row + 1, col)))
+	{
+		neighborVec.push_back(gameState.at(row + 1).at(col));
+	}
+	if (checkBounds(row, col - 1) && (!checkBlocked(gameState, row, col - 1)))
+	{
+		neighborVec.push_back(gameState.at(row).at(col - 1));
+	}
+	if (checkBounds(row, col + 1) && (!checkBlocked(gameState, row, col + 1)))
+	{
 		neighborVec.push_back(gameState.at(row).at(col + 1));
 	}
 	return neighborVec;

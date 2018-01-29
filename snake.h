@@ -18,16 +18,18 @@ class Snake : public Fl_Double_Window
 		std::vector<std::string> buffer; //input buffer 
 		
 		int startX, startY;			//starting position
+        int screenW, screenH;       //screen resolution in pixels
 		int maxBufferSize;			//max number of inputs to store in buffer
 		
 		bool dead;					//Triggered on collision with self/walls
 		
 		std::string direction;		//The snake's current heading (change to enum?)
+        std::string searchAlgorithm;//Which algorithm do we use?
 
 		Food* food;					//food piece for the game board
 
 	public:
-		Snake(int numSegments, int x, int y); //constructor
+		Snake(int numSegments, int x, int y, int screenW, int screenH, std::string searchAlgorithm); //constructor
 		int handle(int event);				  //FLTK event handler
 		int getSize();					
 		
