@@ -6,7 +6,7 @@
 #include <FL/Fl_Int_Input.H>
 using namespace std;
 
-double timeInterval;
+double timeInterval = 0.05;
 
 //GLOBALS
 Fl_Double_Window* menuWindow;
