@@ -43,6 +43,8 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 			cout << "AStar: goal node found! (nodes explored = "
 			     << openSet.size() + closedSet.size() << ")" << endl;
 
+            nodeStats.push_back(openSet.size() + closedSet.size());
+
 			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
 
 			//draw the open and closed sets
@@ -109,6 +111,8 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 	pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "AStar: no path found! (nodes explored = " << openSet.size() + closedSet.size()
 	     << ")" << endl;
+
+    nodeStats.push_back(openSet.size() + closedSet.size());
 	     
 	cout << "AStar: drawing open set (cyan) ... ";
 	drawSet(openSet, FL_CYAN);
@@ -153,6 +157,8 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 			cout << "GreedyBFS: goal node found! (nodes explored = "
 			     << openSet.size() + closedSet.size() << ")" << endl;
 
+            nodeStats.push_back(openSet.size() + closedSet.size());
+
 			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
 
 			//draw the open and closed sets
@@ -170,6 +176,7 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 			cout << "GreedyBFS: writing path to input buffer ... ";
 			snake->buffer = buildPath(currGameState, currGameState.at(goalY).at(goalX));
 			cout << "done" << endl;
+            
 			cout << "------------------------------" << endl;
 
 			//tell the game to stop pathfinding (we're done until we eat the food)
@@ -218,6 +225,8 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 	pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "GreedyBFS: no path found! (nodes explored = " << openSet.size() + closedSet.size()
 	     << ")" << endl;
+
+     nodeStats.push_back(openSet.size() + closedSet.size());
 	     
 	cout << "GreedyBFS: drawing open set (cyan) ... ";
 	drawSet(openSet, FL_CYAN);
@@ -226,7 +235,7 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 	cout << "GreedyBFS: drawing closed set (blue) ... ";
 	drawSet(closedSet, FL_BLUE);
 	cout << "done" << endl;
-	
+    
 	cout << "------------------------------" << endl;
 }
 
@@ -263,6 +272,8 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
             cout << "BFS: goal node found! (nodes explored = "
 			     << openSet.size() + closedSet.size() << ")" << endl;
 
+            nodeStats.push_back(openSet.size() + closedSet.size());
+
 			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
 
 			//draw the open and closed sets
@@ -278,6 +289,7 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
 			cout << "BFS: writing path to input buffer ... ";
 			snake->buffer = buildPath(currGameState, currGameState.at(goalY).at(goalX));
 			cout << "done" << endl;
+            
 			cout << "------------------------------" << endl;
 
 			//tell the game to stop pathfinding (we're done until we eat the food)
@@ -306,7 +318,9 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
     pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "BFS: no path found! (nodes explored = " << openSet.size() + closedSet.size()
 	     << ")" << endl;
-	     
+
+    nodeStats.push_back(openSet.size() + closedSet.size());
+    
 	cout << "BFS: drawing open set (cyan) ... ";
 	drawSet(openSet, FL_CYAN);
 	cout << "done" << endl;
@@ -314,6 +328,7 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
 	cout << "BFS: drawing closed set (blue) ... ";
 	drawSet(closedSet, FL_BLUE);
 	cout << "done" << endl;
+    
     cout << "------------------------------" << endl;
 }
 
@@ -405,7 +420,8 @@ vector<string> Pathfinder::buildPath(vector<vector<Node*>> gameState, Node* goal
 	//Start from goal node, move backwards to start
 	vector<string> pathBuffer;
 	Node* current = goal;
-	
+	int pathLength = 0;
+    
 	while (current != nullptr)
 	{
 		current->color(FL_RED);
@@ -435,9 +451,15 @@ vector<string> Pathfinder::buildPath(vector<vector<Node*>> gameState, Node* goal
 		{
 			pathBuffer.push_back("DOWN");
 		}
-		
+
+        pathLength++;
+
+        //traverse the path by moving to the next successor node
 		current = currentParent;
 	}
+
+    //add the current entry to the statistics vector
+    pathStats.push_back(pathLength);
 	return pathBuffer;
 }
 
@@ -487,6 +509,13 @@ void Pathfinder::printGameState(vector<vector<Node*>> gameState)
 	}
 }
 
+void Pathfinder::printStats()
+{
+    cout << "----------STATS----------" << endl;
+    cout << "Average nodes explored: " << calcAvg(nodeStats) << endl;
+    cout << "Average path length: " << calcAvg(pathStats) << endl;
+}
+
 bool Pathfinder::nodeInSet(vector<Node*> set, Node* node)
 {	//linearly search the argument set for the argument node
 	for (int i = 0; i < set.size(); i++)
@@ -522,4 +551,11 @@ bool Pathfinder::checkGoal(int row, int col, int goalRow, int goalCol)
 bool Pathfinder::checkBlocked(vector<vector<Node*>> gameState, int row, int col)
 {
 	return gameState.at(row).at(col)->checkObstacle();
+}
+
+double Pathfinder::calcAvg(vector<int> data)
+{
+    int dataSum = accumulate(data.begin(), data.end(), 0);
+    double mean = (double)dataSum / (double) data.size();
+    return mean;
 }

@@ -132,6 +132,8 @@ void Snake::move()
 	return;
 }
 
+Pathfinder* Snake::getPathfinder() { return this->pathfinder; }
+
 int Snake::getSize() { return body.size(); }
 
 int Snake::handle(int event)

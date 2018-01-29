@@ -30,6 +30,9 @@ class Snake : public Fl_Double_Window
 
 	public:
 		Snake(int numSegments, int x, int y, int screenW, int screenH, std::string searchAlgorithm); //constructor
+
+        Pathfinder* getPathfinder();
+        
 		int handle(int event);				  //FLTK event handler
 		int getSize();					
 		

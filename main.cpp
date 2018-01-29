@@ -6,7 +6,7 @@
 #include <FL/Fl_Int_Input.H>
 using namespace std;
 
-double timeInterval = 0.05;
+double timeInterval;
 
 //GLOBALS
 Fl_Double_Window* menuWindow;
@@ -63,7 +63,12 @@ void gameUpdate(void* game)
 		snake->checkCollision();
 		Fl::repeat_timeout(timeInterval, gameUpdate, snake);
 	}
-	else cout << "Snake: game over! (size = " << snake->getSize() << ")" << endl;
+	else
+    {
+        cout << "Snake: game over! (size = " << snake->getSize() << ")" << endl;
+        snake->getPathfinder()->printStats();
+    }
+    
 }
 
 void startButtonCallback(Fl_Widget* w, void* v)
@@ -71,7 +76,7 @@ void startButtonCallback(Fl_Widget* w, void* v)
     Snake* game = (Snake*)v;
     menuWindow->hide();
 
-    double timeInterval = 0.05;
+    //default values
     int screenW = 800;
     int screenH = 600;
     string algorithm = "AStar";

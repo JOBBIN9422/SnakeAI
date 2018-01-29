@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 #include "snake.h"
 #include "node.h"
 #include <FL/fl_draw.H>
@@ -21,6 +22,9 @@ class Pathfinder
 
 		bool pathFound; 	//is a path found?
 
+        std::vector<int> nodeStats; //contains nodes explored count for each search
+        std::vector<int> pathStats; //contains path length for each search
+
 	public:
 		Pathfinder(Snake* snake);
 
@@ -31,6 +35,8 @@ class Pathfinder
 		void AStar(int startX, int startY, int goalX, int goalY);
 		void greedyBFS(int startX, int startY, int goalX, int goalY);
 		void BFS(int startX, int startY, int goalX, int goalY);
+
+        void printStats();
         
 		void printGameState(std::vector<std::vector<Node*>> gameState);
 		void resetPathFlag();
@@ -49,4 +55,6 @@ class Pathfinder
 		
 		//Walks the path created by A*, returns a buffer of directions
 		std::vector<std::string> buildPath(std::vector<std::vector<Node*>> gameState, Node* goal);
+
+        double calcAvg(std::vector<int> data);   //takes floating-point mean of an integer vector
 };
