@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
     algorithmChoice->add("AStar");
     algorithmChoice->add("GreedyBFS");
     algorithmChoice->add("BFS");
+    algorithmChoice->add("DFS");
     algorithmChoice->value(0);
     
     screenWInput = new Fl_Int_Input(180, 40, 120, 20, "Screen Width (px)");

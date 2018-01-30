@@ -345,6 +345,77 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
     cout << "------------------------------" << endl;
 }
 
+void Pathfinder::DFS(int startX, int startY, int goalX, int goalY)
+{
+    cout << "DFS: starting search from (" << startX << ", " << startY << ") to ("
+    << goalX << ", " << goalY << ")" << endl;
+    
+    vector<vector<Node*>> currGameState = updateGameState();
+    vector<Node*> discoveredSet;
+    vector<Node*> stack;
+
+    stack.push_back(currGameState.at(startY).at(startX));
+
+    while (!stack.empty())
+    {
+        Node* current = stack.back();
+        stack.pop_back();
+
+        if (checkGoal(current->getY(), current->getX(), goalY, goalX))
+        {
+            cout << "DFS: goal node found! (nodes explored = "
+			     << discoveredSet.size() << ")" << endl;
+
+            nodeStats.push_back(discoveredSet.size());
+
+			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
+
+			cout << "DFS: drawing discovered set (blue) ... ";
+			drawSet(discoveredSet, FL_BLUE);
+			cout << "done" << endl;
+			
+			//write path directly to snake's input buffer
+			cout << "DFS: writing path to input buffer ... ";
+			snake->buffer = buildPath(currGameState, currGameState.at(goalY).at(goalX));
+			cout << "done" << endl;
+            
+			cout << "------------------------------" << endl;
+
+			//tell the game to stop pathfinding (we're done until we eat the food)
+			pathFound = true;
+			return;
+        }
+
+        if (!nodeInSet(discoveredSet, current))
+        {
+            discoveredSet.push_back(current);
+            vector<Node*>neighborVec = getNeighborsBFS(currGameState, current);
+
+            for (int i = 0; i < neighborVec.size(); i++)
+            {
+                Node* currentNeighbor = neighborVec.at(i);
+                stack.push_back(currentNeighbor);
+                if (currentNeighbor->getParent() == nullptr)
+                    currentNeighbor->setParent(current);
+            }
+            
+        }
+    }
+
+    pathFound = false; //tell the game to keep pathfinding on each new frame
+	cout << "DFS: no path found! (nodes explored = " << discoveredSet.size()
+	     << ")" << endl;
+
+    nodeStats.push_back(discoveredSet.size());
+    
+	cout << "BFS: drawing discovered set (blue) ... ";
+	drawSet(discoveredSet, FL_BLUE);
+	cout << "done" << endl;
+    
+    cout << "------------------------------" << endl;
+    
+}
+
 vector<Node*> Pathfinder::getNeighbors2(vector<vector<Node*>> gameState, Node* node)
 {
 	//will contain the VALID adjacent nodes to the argument node

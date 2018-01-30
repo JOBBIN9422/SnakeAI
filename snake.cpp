@@ -103,6 +103,8 @@ void Snake::move()
             pathfinder->greedyBFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
         else if (searchAlgorithm == "BFS")
             pathfinder->BFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
+        else if (searchAlgorithm == "DFS")
+            pathfinder->DFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
 	}
 	
 	

@@ -36,6 +36,7 @@ class Pathfinder
 		void AStar(int startX, int startY, int goalX, int goalY);
 		void greedyBFS(int startX, int startY, int goalX, int goalY);
 		void BFS(int startX, int startY, int goalX, int goalY);
+		void DFS(int startX, int startY, int goalX, int goalY);
 
         void printStats();
         
