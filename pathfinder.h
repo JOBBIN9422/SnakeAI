@@ -24,6 +24,7 @@ class Pathfinder
 
         std::vector<int> nodeStats; //contains nodes explored count for each search
         std::vector<int> pathStats; //contains path length for each search
+        std::vector<std::vector<Node*>> gameState;
 
 	public:
 		Pathfinder(Snake* snake);

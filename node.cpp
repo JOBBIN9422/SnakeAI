@@ -25,7 +25,15 @@ void Node::setObstacle(bool obstacle) { this->isObstacle = obstacle; }
 void Node::setMoveCost(int moveCost) { this->moveCost = moveCost; } 
 void Node::setTotalCost(int totalCost) { this->totalCost = totalCost; } 
 void Node::setParent(Node* parent) { this->parent = parent; } 
-
+void Node::reset()
+{
+    this->color(FL_BLACK);
+    this->parent = nullptr;
+    this->moveCost = INT_MAX;
+    this->totalCost = INT_MAX;
+    this->isObstacle = false;
+    //~ this->redraw();
+}
 
 //calculate the cost to move from current node to goal (Manhattan distance)
 int Node::heuristic(int xGoal, int yGoal)

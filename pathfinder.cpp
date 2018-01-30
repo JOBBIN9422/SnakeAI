@@ -7,7 +7,20 @@ bool compare(Node* lhs, Node* rhs)
 }
 
 Pathfinder::Pathfinder(Snake* snake) : snake(snake), numRows(snake->h() / 20),
-numCols(snake->w() / 20), pathFound(false) {}
+numCols(snake->w() / 20), pathFound(false)
+{
+    for (int i = 0; i < numRows; i++)
+	{
+		vector<Node*> currentRow;
+		for (int j = 0; j < numCols; j++)
+		{
+			Node* tempNode = new Node(j, i);
+			snake->add(tempNode);	//make nodes visible in the window
+			currentRow.push_back(tempNode);
+		}
+		gameState.push_back(currentRow);
+	}
+}
 
 void Pathfinder::resetPathFlag()
 {
@@ -468,7 +481,6 @@ void Pathfinder::setSnake(Snake* snake){ this->snake = snake; }
 vector<vector<Node*>> Pathfinder::updateGameState()
 {
 	//initialize all grid cells to be empty
-	vector<vector<Node*>> gameState;
 
 	//initialize game state vector
 	for (int i = 0; i < numRows; i++)
@@ -476,11 +488,8 @@ vector<vector<Node*>> Pathfinder::updateGameState()
 		vector<Node*> currentRow;
 		for (int j = 0; j < numCols; j++)
 		{
-			Node* tempNode = new Node(j, i);
-			snake->add(tempNode);	//make nodes visible in the window
-			currentRow.push_back(tempNode);
+            gameState.at(i).at(j)->reset();
 		}
-		gameState.push_back(currentRow);
 	}
 	
 	//set the snake's body as obstacles (ignore the head)
@@ -489,7 +498,6 @@ vector<vector<Node*>> Pathfinder::updateGameState()
 		gameState.at(snake->body.at(i)->getY() / 20)
 				 .at(snake->body.at(i)->getX() / 20)->setObstacle(true);
 	}
-
 	return gameState;
 }
 

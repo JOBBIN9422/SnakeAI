@@ -12,9 +12,10 @@ Segment::Segment(int x, int y) : Fl_Box(x, y, 20, 20)
 void Segment::move(int newX, int newY)
 {
 	this->hide();
+    
 	this->x = newX;				//update segment coordinates
 	this->y = newY;
-	//cout << "x = " << newX << " y = " << newY << endl;
+    
 	this->position(newX, newY);	//move the segment to its new position
 	this->show();
 }

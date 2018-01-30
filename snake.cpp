@@ -10,14 +10,17 @@ Snake::Snake(int numSegments, int x, int y, int screenW, int screenH, string sea
 startX(x),startY(y),
 maxBufferSize(1000),
 screenW(screenW), screenH(screenH),
-Fl_Double_Window(screenW, screenH, "shitty snake game"),
+Fl_Double_Window(screenW, screenH, searchAlgorithm.c_str()),
 searchAlgorithm(searchAlgorithm),
 direction("RIGHT"), dead(false)
 {	/*
 	Fl_Box* bgImage = new Fl_Box(0, 0, 800, 600);
 	bgImage->image(background);
 	*/
-	
+
+    //instantiate pathfinder
+    pathfinder = new Pathfinder(this);
+    
 	this->color(FL_BLACK);
 	srand(time(NULL));
 	for (int i = 0; i < numSegments; i++)
@@ -29,9 +32,6 @@ direction("RIGHT"), dead(false)
 	food = new Food(0, 0);
 	food->move(this->w(), this->h(), body); //randomize initial food position
 
-	//instantiate pathfinder
-	pathfinder = new Pathfinder(this);
-	
 	this->show();
 }
 
@@ -103,8 +103,6 @@ void Snake::move()
             pathfinder->greedyBFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
         else if (searchAlgorithm == "BFS")
             pathfinder->BFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
-                
-        
 	}
 	
 	

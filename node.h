@@ -31,6 +31,7 @@ class Node : public Fl_Box
 		void setMoveCost(int moveCost);
 		void setTotalCost(int totalCost);
 		void setParent(Node* parent);
+        void reset();
 
 		int heuristic(int xGoal, int yGoal);
 		int updateTotalCost(int xGoal, int yGoal);
