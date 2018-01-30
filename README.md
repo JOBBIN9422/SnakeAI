@@ -4,4 +4,5 @@ A* search algorithm used to play snake. Implemented in C++ using the FLTK librar
 <li>A*</li>
 <li>Breadth-first search</li>
 <li>Greedy best-first search</li>
+<li>Depth-first search (iterative)</li>
 </ul>
