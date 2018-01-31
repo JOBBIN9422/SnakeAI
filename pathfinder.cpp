@@ -112,18 +112,6 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 				{
 					openSet.push_back(currentNeighbor);
 				}
-				else
-				{	//check for lower cost paths 
-					auto openNeighbor = find(openSet.begin(), openSet.end(), currentNeighbor);
-
-					if (currentNeighbor->getMoveCost() < (*openNeighbor)->getMoveCost())
-					{
-						cout << "AStar: lower cost path found" << endl;
-						(*openNeighbor)->setMoveCost(currentNeighbor->getMoveCost());
-						(*openNeighbor)->setParent(currentNeighbor->getParent());
-					}
-				}
-				
 			}
 		}
 	}
@@ -239,18 +227,6 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 				{
 					openSet.push_back(currentNeighbor);
 				}
-				else
-				{	//check for lower cost paths 
-					auto openNeighbor = find(openSet.begin(), openSet.end(), currentNeighbor);
-
-					if (currentNeighbor->getMoveCost() < (*openNeighbor)->getMoveCost())
-					{
-						cout << "GreedyBFS: lower cost path found" << endl;
-						(*openNeighbor)->setMoveCost(currentNeighbor->getMoveCost());
-						(*openNeighbor)->setParent(currentNeighbor->getParent());
-					}
-				}
-				
 			}
 		}
 	}
