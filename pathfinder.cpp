@@ -29,6 +29,7 @@ void Pathfinder::resetPathFlag()
 
 void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 {
+    clock_t startTime = clock();
 	cout << "AStar: starting search from (" << startX << ", " << startY << ") to ("
 	     << goalX << ", " << goalY << ")" << endl; 
 	//fetch the most recent iteration of the game board
@@ -53,8 +54,14 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 		//don't do anymore pathfinding if we've found the goal!
 		if (checkGoal(current->getY(), current->getX(), goalY, goalX))
 		{
+            clock_t finishTime = clock();
 			cout << "AStar: goal node found! (nodes explored = "
 			     << openSet.size() + closedSet.size() << ")" << endl;
+
+            double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            timeStats.push_back(searchTime);
+            
+            cout << "AStar: time taken = " << searchTime << " ms "<< endl;
 
             nodeStats.push_back(openSet.size() + closedSet.size());
 
@@ -121,10 +128,16 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 		}
 	}
 
+    clock_t finishTime = clock();
 	pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "AStar: no path found! (nodes explored = " << openSet.size() + closedSet.size()
 	     << ")" << endl;
 
+    double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+    cout << "AStar: time taken = " << searchTime << " ms "<< endl;
+    timeStats.push_back(searchTime);
+    
     nodeStats.push_back(openSet.size() + closedSet.size());
 	     
 	cout << "AStar: drawing open set (cyan) ... ";
@@ -143,6 +156,7 @@ void Pathfinder::AStar(int startX, int startY, int goalX, int goalY)
 
 void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 {
+    clock_t startTime = clock();
 	cout << "GreedyBFS: starting search from (" << startX << ", " << startY << ") to ("
 	     << goalX << ", " << goalY << ")" << endl; 
 	//fetch the most recent iteration of the game board
@@ -167,8 +181,14 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 		//don't do anymore pathfinding if we've found the goal!
 		if (checkGoal(current->getY(), current->getX(), goalY, goalX))
 		{
+            clock_t finishTime = clock();
 			cout << "GreedyBFS: goal node found! (nodes explored = "
 			     << openSet.size() + closedSet.size() << ")" << endl;
+
+            double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+            cout << "GreedyBFS: time taken = " << searchTime << " ms "<< endl;
+            timeStats.push_back(searchTime);
 
             nodeStats.push_back(openSet.size() + closedSet.size());
 
@@ -234,12 +254,18 @@ void Pathfinder::greedyBFS(int startX, int startY, int goalX, int goalY)
 			}
 		}
 	}
-
+    
+    clock_t finishTime = clock();
 	pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "GreedyBFS: no path found! (nodes explored = " << openSet.size() + closedSet.size()
 	     << ")" << endl;
 
-     nodeStats.push_back(openSet.size() + closedSet.size());
+    double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+    cout << "GreedyBFS: time taken = " << searchTime << " ms "<< endl;
+    timeStats.push_back(searchTime);
+    
+    nodeStats.push_back(openSet.size() + closedSet.size());
 	     
 	cout << "GreedyBFS: drawing open set (cyan) ... ";
 	drawSet(openSet, FL_CYAN);
@@ -263,6 +289,7 @@ void Pathfinder::drawSet(vector<Node*> set, Fl_Color color)
 
 void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
 {
+    clock_t startTime = clock();
     cout << "BFS: starting search from (" << startX << ", " << startY << ") to ("
      << goalX << ", " << goalY << ")" << endl; 
 	//fetch the most recent iteration of the game board
@@ -282,9 +309,15 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
 
         if (checkGoal(current->getY(), current->getX(), goalY, goalX))
         {
+            clock_t finishTime = clock();
             cout << "BFS: goal node found! (nodes explored = "
 			     << openSet.size() + closedSet.size() << ")" << endl;
 
+            double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+            cout << "BFS: time taken = " << searchTime << " ms "<< endl;
+            timeStats.push_back(searchTime);
+            
             nodeStats.push_back(openSet.size() + closedSet.size());
 
 			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
@@ -327,10 +360,15 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
         }
         closedSet.push_back(current);
     }
-    
+    clock_t finishTime = clock();
     pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "BFS: no path found! (nodes explored = " << openSet.size() + closedSet.size()
 	     << ")" << endl;
+
+    double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+    cout << "BFS: time taken = " << searchTime << " ms "<< endl;
+    timeStats.push_back(searchTime);
 
     nodeStats.push_back(openSet.size() + closedSet.size());
     
@@ -347,6 +385,7 @@ void Pathfinder::BFS(int startX, int startY, int goalX, int goalY)
 
 void Pathfinder::DFS(int startX, int startY, int goalX, int goalY)
 {
+    clock_t startTime = clock();
     cout << "DFS: starting search from (" << startX << ", " << startY << ") to ("
     << goalX << ", " << goalY << ")" << endl;
     
@@ -363,9 +402,15 @@ void Pathfinder::DFS(int startX, int startY, int goalX, int goalY)
 
         if (checkGoal(current->getY(), current->getX(), goalY, goalX))
         {
+            clock_t finishTime = clock();
             cout << "DFS: goal node found! (nodes explored = "
 			     << discoveredSet.size() << ")" << endl;
 
+            double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+            cout << "DFS: time taken = " << searchTime << " ms "<< endl;
+            timeStats.push_back(searchTime);
+            
             nodeStats.push_back(discoveredSet.size());
 
 			currGameState.at(startY).at(startX)->setParent(nullptr); //shitty spaghet code 
@@ -402,10 +447,16 @@ void Pathfinder::DFS(int startX, int startY, int goalX, int goalY)
         }
     }
 
+    clock_t finishTime = clock();
     pathFound = false; //tell the game to keep pathfinding on each new frame
 	cout << "DFS: no path found! (nodes explored = " << discoveredSet.size()
 	     << ")" << endl;
 
+    double searchTime = (double)((finishTime-startTime)*1000/(double)CLOCKS_PER_SEC);
+            
+    cout << "DFS: time taken = " << searchTime << " ms "<< endl;
+    timeStats.push_back(searchTime);
+    
     nodeStats.push_back(discoveredSet.size());
     
 	cout << "BFS: drawing discovered set (blue) ... ";
@@ -591,8 +642,9 @@ void Pathfinder::printGameState(vector<vector<Node*>> gameState)
 void Pathfinder::printStats()
 {
     cout << "----------STATS----------" << endl;
-    cout << "Average nodes explored: " << calcAvg(nodeStats) << endl;
-    cout << "Average path length: " << calcAvg(pathStats) << endl;
+    cout << "Average nodes explored: " << calcAvg(nodeStats) << " nodes" << endl;
+    cout << "Average path length: " << calcAvg(pathStats) << " nodes" << endl;
+    cout << "Average time taken: " << calcAvg(timeStats) << " ms" << endl;
 }
 
 bool Pathfinder::nodeInSet(vector<Node*> set, Node* node)
@@ -632,9 +684,15 @@ bool Pathfinder::checkBlocked(vector<vector<Node*>> gameState, int row, int col)
 	return gameState.at(row).at(col)->checkObstacle();
 }
 
-double Pathfinder::calcAvg(vector<int> data)
+double Pathfinder::calcAvg(vector<double> data)
 {
     int dataSum = accumulate(data.begin(), data.end(), 0);
     double mean = (double)dataSum / (double) data.size();
+    return mean;
+}
+double Pathfinder::calcAvg(vector<int> data)
+{
+    int dataSum = accumulate(data.begin(), data.end(), 0.0);
+    double mean = dataSum / (double) data.size();
     return mean;
 }

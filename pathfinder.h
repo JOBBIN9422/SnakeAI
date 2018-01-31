@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <vector>
 #include <algorithm>
+#include <ctime>
 #include <numeric>
 #include "snake.h"
 #include "node.h"
@@ -24,6 +25,7 @@ class Pathfinder
 
         std::vector<int> nodeStats; //contains nodes explored count for each search
         std::vector<int> pathStats; //contains path length for each search
+        std::vector<double> timeStats; //contains path length for each search
         std::vector<std::vector<Node*>> gameState;
 
 	public:
@@ -59,4 +61,5 @@ class Pathfinder
 		std::vector<std::string> buildPath(std::vector<std::vector<Node*>> gameState, Node* goal);
 
         double calcAvg(std::vector<int> data);   //takes floating-point mean of an integer vector
+        double calcAvg(std::vector<double> data);   //takes floating-point mean of a double vector
 };
