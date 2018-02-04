@@ -1,5 +1,5 @@
-#include "pathfinder.h"
 using namespace std;
+#include "pathfinder.h"
 
 bool compare(Node* lhs, Node* rhs)
 {
@@ -419,7 +419,6 @@ void Pathfinder::DFS(int startX, int startY, int goalX, int goalY)
                 if (currentNeighbor->getParent() == nullptr)
                     currentNeighbor->setParent(current);
             }
-            
         }
     }
 
@@ -662,13 +661,14 @@ bool Pathfinder::checkBlocked(vector<vector<Node*>> gameState, int row, int col)
 
 double Pathfinder::calcAvg(vector<double> data)
 {
-    int dataSum = accumulate(data.begin(), data.end(), 0);
-    double mean = (double)dataSum / (double) data.size();
+    double dataSum = accumulate(data.begin(), data.end(), 0.0);
+    double mean = dataSum / (double) data.size();
     return mean;
 }
+
 double Pathfinder::calcAvg(vector<int> data)
 {
-    int dataSum = accumulate(data.begin(), data.end(), 0.0);
-    double mean = dataSum / (double) data.size();
+    int dataSum = accumulate(data.begin(), data.end(), 0);
+    double mean = (double) dataSum / (double) data.size();
     return mean;
 }

@@ -15,7 +15,6 @@ class Snake;
 
 class Pathfinder
 {
-		
 	private:
 		Snake* snake;
 

@@ -52,3 +52,4 @@ int Node::updateTotalCost(int xGoal, int yGoal)
 {
 	this->totalCost = moveCost + heuristic(xGoal, yGoal);
 }
+
