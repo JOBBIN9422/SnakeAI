@@ -5,7 +5,7 @@
 using namespace std;
 
 Node::Node(int x, int y) : Fl_Box(20 * x, 20 * y, 20, 20), x(x), y(y),
-moveCost(INT_MAX), totalCost(INT_MAX), isObstacle(false), parent(nullptr)
+moveCost(0), totalCost(0), isObstacle(false), parent(nullptr)
 {
 	this->color(FL_BLACK);
 	this->box(FL_BORDER_FRAME);
@@ -38,7 +38,8 @@ void Node::reset()
 //calculate the cost to move from current node to goal (Manhattan distance)
 int Node::heuristic(int xGoal, int yGoal)
 {
-	return abs(this->x - xGoal) + abs(this->y - yGoal);
+	int manhattanDist = (abs(this->x - xGoal) + abs(this->y - yGoal));
+	return manhattanDist;
     //~ int h1 = abs(this->x - xGoal) + abs(this->y - yGoal);
 
 	//~ int dx = abs(this->x - xGoal);
