@@ -635,6 +635,15 @@ bool Pathfinder::nodeInSet(vector<Node*> set, Node* node)
 	return false;
 }
 
+void Pathfinder::setRepeatSearch(bool repeat)
+{
+    this->repeatSearch = repeat;
+}
+bool Pathfinder::checkRepeatSearch()
+{
+    return this->repeatSearch;
+}
+
 bool Pathfinder::checkPathFound()
 {
 	return this->pathFound;

@@ -4,6 +4,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Check_Button.H>
 using namespace std;
 
 double timeInterval = 0.05;
@@ -18,6 +19,7 @@ Fl_Int_Input* screenWInput;
 Fl_Int_Input* screenHInput;
 
 Fl_Choice* algorithmChoice;
+Fl_Check_Button* repeatSearchCheck;
 
 //FORWARD DECLARES
 void startButtonCallback(Fl_Widget* w, void* v);
@@ -33,9 +35,11 @@ int main(int argc, char* argv[])
 
     Snake* game;
 
-    menuWindow = new Fl_Double_Window(320, 140, "Menu");
-    Fl_Button* startButton = new Fl_Button(140, 120, 40, 20, "Start");
+    menuWindow = new Fl_Double_Window(320, 180, "Menu");
+    Fl_Button* startButton = new Fl_Button(140, 160, 40, 20, "Start");
     startButton->callback(startButtonCallback, game);
+
+    repeatSearchCheck = new Fl_Check_Button(20, 120, 40, 20, "Repeat search on each frame (SLOW!)");
     
     timeStepInput = new Fl_Input(180, 20, 120, 20, "Time Step (Seconds)");
     
@@ -95,6 +99,7 @@ void startButtonCallback(Fl_Widget* w, void* v)
         algorithm = algorithmChoice->text();
     
     game = new Snake(1, 0, 0, screenW, screenH, algorithm);
+    game->getPathfinder()->setRepeatSearch(repeatSearchCheck->value());
     Fl::add_timeout(timeInterval, gameUpdate, game);
 }
 

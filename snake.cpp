@@ -94,11 +94,11 @@ void Snake::move()
 	int foodY = food->getY();
 
 	//only run A* if a valid path has not already been found
-	if (!pathfinder->checkPathFound())
+	if (!pathfinder->checkPathFound() || pathfinder->checkRepeatSearch())
 	{
 		//divide by 20 to convert values from pixels to grid coords (gross)
         if(searchAlgorithm == "AStar")
-            pathfinder->AStar(headX / 20, headY / 20, foodX / 20, foodY / 20);
+            pathfinder->AStar(headX / 20, headY / 20, foodX / 20, foodY / 20); 
         else if (searchAlgorithm == "GreedyBFS")
             pathfinder->greedyBFS(headX / 20, headY / 20, foodX / 20, foodY / 20);
         else if (searchAlgorithm == "BFS")

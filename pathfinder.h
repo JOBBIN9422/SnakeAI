@@ -21,6 +21,7 @@ class Pathfinder
 		int numRows, numCols;	//grid size
 
 		bool pathFound; 	//is a path found?
+		bool repeatSearch; 	//repeat on every frame?
 
         std::vector<int> nodeStats; //contains nodes explored count for each search
         std::vector<int> pathStats; //contains path length for each search
@@ -33,8 +34,9 @@ class Pathfinder
 		//~ int heuristic(Node* start, Node* goal);
 		
 		void setSnake(Snake* snake);
+		void setRepeatSearch(bool repeat);
         
-		void AStar(int startX, int startY, int goalX, int goalY);
+		void AStar(int startX, int startY, int goalX, int goalY); 
 		void greedyBFS(int startX, int startY, int goalX, int goalY);
 		void BFS(int startX, int startY, int goalX, int goalY);
 		void DFS(int startX, int startY, int goalX, int goalY);
@@ -54,6 +56,7 @@ class Pathfinder
 		bool checkGoal(int row, int col, int goalRow, int goalCol); //is the node the goal?
 		bool checkBlocked(std::vector<std::vector<Node*>> gameState, int row, int col); //is the node within the snake?
 		bool checkPathFound();
+		bool checkRepeatSearch();
 		bool nodeInSet(std::vector<Node*>set, Node* node);  //performs a linear search for node in set
 		
 		//Walks the path created by A*, returns a buffer of directions
